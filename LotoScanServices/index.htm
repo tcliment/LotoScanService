@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var rootURL = "http://localhost:13678/restservice/";
+
+            function getObtenerFechaListaDePremios() {
+                console.log('getObtenerFechaListaDePremios');
+                $.ajax({
+                    type: 'GET',
+                    url: rootURL + "obtenerFechaListaDePremios",
+                    dataType: "xml", // data type of response
+                    success: renderFechaListaPremios
+                });
+            }
+            function getObtenerListaPremios() {
+                console.log('getObtenerListaPremios');
+                $.ajax({
+                    type: 'GET',
+                    url: rootURL + "obtenerListaPremios?diaDesde=00&&mesDesde=00&anyoDesde=00",
+                    dataType: "xml", // data type of response
+                    success: renderListaPremios
+                });
+            }
+
+            function renderFechaListaPremios(xml) {
+                try {
+                    var result = '';
+                    console.log('Inicio funcion renderFechaListaPremios');
+                    $(xml).find('RespuestaFechaUltimaActualizacion').each(function () {
+                        console.log('Procesando entrada renderFechaListaPremios');
+                        result = result + '<li>' + $(this).find('ultimaActualizacion').text() + "</li>";
+                    });
+                    $('#fechaListaPremios').html(result);
+                    
+                    
+                }
+                catch (ex) {
+                    console.log('eror: ' + ex.message);
+                }
+
+            }
+            function renderListaPremios(xml) {
+                try {
+                    console.log('Inicio funcion renderListaPremios');
+                    var result = '';
+                    $(xml).find('PremioInfo').each(function () {
+                        console.log('Procesando entrada renderListaPremios');
+                        result = result + '<li>numero: ' + $(this).find('numero').text() + ', serie: ' + $(this).find('serie').text();
+                        result = result + ', tipoSorteo: ' + $(this).find('tipoSorteo').text() + ', fechaSorteo: ' + $(this).find('fechaSorteo').text();
+                        result = result + ', categoriaPremio: ' + $(this).find('categoriaPremio').text() + '</li>';
+
+                    });
+                    $('#listaPremios').html(result);
+                }
+                catch (ex) {
+                    console.log('eror: ' + ex.message);
+                }
+
+            }
+            getObtenerFechaListaDePremios();
+            getObtenerListaPremios();
+        </script>
+        <h1>Test de acceso a los servicios REST</h1>
+        <div id="fechaListaPremios">Accediendo al servicio de obtenerFechaListaDePremios...</div>
+        <div id="listaPremios">Accediendo al servicio de obtenerListaPremios...</div>
+    </body>
+</html>
+
